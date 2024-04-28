@@ -1,0 +1,1 @@
+import{_ as o,o as r,c as s,r as t}from"./Bp8xqgcL.js";const c={},n={class:"relative max-w-screen-xl px-4 sm:px-8 mx-auto grid grid-cols-12 gap-x-6 overflow-hidden"};function _(e,a){return r(),s("div",n,[t(e.$slots,"default")])}const d=o(c,[["render",_]]);export{d as _};
