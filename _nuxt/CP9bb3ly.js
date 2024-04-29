@@ -1,0 +1,1 @@
+import{_ as t}from"./DdEkiMsO.js";import{_ as s,c as n,a as e,b as c,w as _,o as a}from"./BtObwut7.js";const l={},r={class:"w-full"},i={id:"hero",class:"w-full pb-24"},d=e("h1",null,"Consulta CNPJ pelo número",-1);function f(u,m){const o=t;return a(),n("div",r,[e("section",i,[c(o,null,{default:_(()=>[d]),_:1})])])}const x=s(l,[["render",f]]);export{x as default};
