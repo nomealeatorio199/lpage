@@ -1,1 +1,0 @@
-import{_ as o}from"./DdEkiMsO.js";import{_ as s,c as a,a as t,b as c,w as _,o as n}from"./BtObwut7.js";const l={},r={class:"w-full"},i={id:"hero",class:"w-full pb-24"},d=t("h1",null,"Consulta Situação Cadastral",-1);function u(f,m){const e=o;return n(),a("div",r,[t("section",i,[c(e,null,{default:_(()=>[d]),_:1})])])}const x=s(l,[["render",u]]);export{x as default};
