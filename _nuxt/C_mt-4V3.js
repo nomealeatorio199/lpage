@@ -1,0 +1,1 @@
+import{_ as o,o as s,c as t,J as n}from"./BV96B_by.js";const c={},r={class:"relative max-w-screen-xl px-4 sm:px-8 mx-auto overflow-hidden"};function _(e,a){return s(),t("div",r,[n(e.$slots,"default")])}const d=o(c,[["render",_]]);export{d as _};
