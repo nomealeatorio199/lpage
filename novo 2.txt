@@ -1,0 +1,238 @@
+<template>
+    <div class="w-full">
+        <section id="company_info" class="w-full pb-2">
+            <div class="relative max-w-screen-xl px-4 sm:px-8 mx-auto overflow-hidden">
+                <h1 class="font-bold">{{ legal_name }} - {{ taxinfo_number }} </h1>
+                <section id="company_summary" class="mt-6 w-2/3 border-b">
+                    <h2 class="font-bold my-2">Resumo da Empresa</h2>
+                    <p>{{ company_description }} {{ company_activities }}</p>
+                </section>
+                <section id="company_more_info" class="mt-6 w-2/3 border-b">
+                    <h2 class="font-bold my-6">Outras Informações</h2>
+                    <dl class="my-2">
+                        <dd>
+                            <dl class="flex flex-col flex-wrap gap-2">
+                                <div class="flex flex-row">
+                                    <dt class="font-semibold w-32">Nome Fantasia:</dt>
+                                    <dd class="font-normal w-auto">{{ trading_name }}</dd>
+                                </div>
+                                <div class="flex flex-row">
+                                    <dt class="font-semibold w-32">Data Fundação:</dt>
+                                    <dd class="font-normal w-auto">{{ founding_year }}</dd>
+                                </div>
+
+                            </dl>
+                        </dd>
+                    </dl>
+                </section>
+                <section id="company_irs_summary" class="mt-6 w-2/3 border-b">
+                    <h2 class="font-bold my-6">Informações Receita Federal <span
+                            class="font-light text-sm italic">Atualizado em 24/04/2024</span></h2>
+                    <dl class="my-2">
+                        <dd>
+                            <dl class="flex flex-col flex-wrap gap-2">
+                                <div class="flex flex-row">
+                                    <dt class="font-semibold w-32">Tipo:</dt>
+                                    <dd class="font-normal w-auto">{{ company_type }}</dd>
+                                </div>
+                                <div class="flex flex-row">
+                                    <dt class="font-semibold w-32">Status:</dt>
+                                    <dd class="font-normal w-auto">{{ company_status }}</dd>
+                                </div>
+                                <div class="flex flex-row">
+                                    <dt class="font-semibold w-32">Capital Social:</dt>
+                                    <dd class="font-normal w-auto">{{ equity_capital }}</dd>
+                                </div>
+                            </dl>
+                        </dd>
+                    </dl>
+                </section>
+            </div>
+        </section>
+        <section id="company_address_info" class="w-full pb-2">
+            <div class="relative max-w-screen-xl px-4 sm:px-8 mx-auto overflow-hidden">
+                <h2 class="font-bold my-6">Localização</h2>
+                <dl class="my-2">
+                    <dd>
+                        <dl class="flex flex-col flex-wrap gap-2">
+                            <div class="flex flex-row">
+                                <dt class="font-semibold w-40">Endereço:</dt>
+                                <dd class="w-auto">{{ address_street }}, {{ address_number }}</dd>
+                            </div>
+                            <div class="flex flex-row">
+                                <dt class="font-semibold w-40">Complemento:</dt>
+                                <dd class="w-auto">{{ address_complement }}</dd>
+                            </div>
+                            <div class="flex flex-row">
+                                <dt class="font-semibold w-40">Bairro:</dt>
+                                <dd class="w-auto">{{ address_neighborhood }}</dd>
+                            </div>
+                            <div class="flex flex-row">
+                                <dt class="font-semibold w-40">Município:</dt>
+                                <dd class="w-auto">{{ address_city }}</dd>
+                            </div>
+                            <div class="flex flex-row">
+                                <dt class="font-semibold w-40">Estado:</dt>
+                                <dd class="w-auto">{{ address_state }}</dd>
+                            </div>
+                            <div class="flex flex-row">
+                                <dt class="font-semibold w-40">País:</dt>
+                                <dd class="w-auto">{{ address_country }}</dd>
+                            </div>
+                            <div class="flex flex-row">
+                                <dt class="font-semibold w-40">Código Postal:</dt>
+                                <dd class="w-auto">{{ address_zipcode }}</dd>
+                            </div>
+                        </dl>
+
+                    </dd>
+                </dl>
+            </div>
+        </section>
+        <section id="company_activity_info" class="w-full pb-2">
+            <div class="relative max-w-screen-xl px-4 sm:px-8 mx-auto overflow-hidden">
+                <h2 class="font-bold my-6">Atividades</h2>
+                <h3 class="font-semibold my-2">Atividade Principal</h3>
+                <p>{{ principal_activity_code }} : {{ principal_activity_description }}</p>
+                <h3 class="font-semibold my-2">Atividades Secundárias</h3>
+                <p class="my-1" v-for:="item in secondary_activities">{{ item.code }} : {{ item.description }}</p>
+            </div>
+        </section>
+    </div>
+</template>
+
+<script lang="ts" setup>
+
+const tag_title = ref('')
+const page_meta_description = ref('')
+const page_meta_title = ref('')
+
+const breadcrumb_name = ref('')
+const breadcrumb_path = ref('')
+
+useHead({
+    titleTemplate: tag_title,
+    meta: [
+        { name: 'description', content: page_meta_description },
+        { property: 'og:title', content: page_meta_title },
+        { property: 'og:description', content: page_meta_description },
+        { property: 'twitter:title', content: page_meta_title },
+        { property: 'twitter:description', content: page_meta_description }
+    ]
+});
+
+const computedBreadcrumbs = computed(() => [
+    {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://ccnpj.com",
+    },
+    {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Empresas",
+        "item": "https://ccnpj.com/empresas",
+    },
+    {
+        "@type": "ListItem",
+        "position": 3,
+        "name": breadcrumb_name.value,
+        "item": breadcrumb_path.value,
+    }
+]);
+
+// Plain object to hold the JSON-LD data
+const breadcrumbsJsonLd = ref({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: []
+});
+
+// Watch the computed property and update the plain object
+watchEffect(() => {
+    breadcrumbsJsonLd.value.itemListElement = computedBreadcrumbs.value;
+});
+
+useJsonld(breadcrumbsJsonLd);
+
+const trading_name = ref('')
+const legal_name = ref('')
+
+const taxinfo_number = ref('')
+const founding_year = ref('')
+
+const company_description = ref('')
+const company_activities = ref('')
+const equity_capital = ref('')
+
+const company_status = ref('')
+const company_type = ref('')
+
+const address_street = ref('')
+const address_number = ref('')
+const address_complement = ref('')
+
+const address_neighborhood = ref('')
+const address_city = ref('')
+const address_state = ref('')
+const address_country = ref('')
+const address_zipcode = ref('')
+
+const principal_activity_code = ref('')
+const principal_activity_description = ref('')
+
+const secondary_activities = ref([])
+
+const companyStore = useCompanyStore();
+const route = useRoute()
+
+onMounted(async () => {
+
+    const id = route.params.id;
+
+    const { data: company } = await useAsyncData(`company:${id}`, () => {
+        return companyStore.getItem(id);
+    });
+
+    // fill address
+    address_street.value = company.value?.addresses[0].street_type + ' ' + company.value?.addresses[0].street;
+    address_number.value = company.value?.addresses[0].number;
+    address_complement.value = company.value?.addresses[0].complement;
+    address_neighborhood.value = company.value?.addresses[0].neighborhood;
+    address_city.value = company.value?.addresses[0].city;
+    address_state.value = company.value?.addresses[0].state;
+    address_country.value = company.value?.addresses[0].country;
+    address_zipcode.value = company.value?.addresses[0].zipcode;
+
+    // fill company
+    taxinfo_number.value = company.value?.company_tax_info.cnpj;
+    trading_name.value = company.value?.company_tax_info.trading_name;
+    legal_name.value = company.value?.company_tax_info.legal_name;
+    equity_capital.value = company.value?.company_tax_info.capital_social;
+    company_type.value = company.value?.company_tax_info.matriz_filial;
+    company_status.value = company.value?.company_tax_info.situacao_cadastral;
+    founding_year.value = company.value?.company_tax_info.data_inicio_atividade;
+
+    tag_title.value = company.value?.header_objs.title;
+    page_meta_title.value = company.value?.header_objs.title;
+    page_meta_description.value = company.value?.header_objs.description;
+
+    breadcrumb_name.value = company.value?.header_objs.title;
+    breadcrumb_path.value = 'https://ccnpj.com/empresas/' + company.value?.cnpj;
+
+    company_description.value = `${company.value?.company_tax_info.legal_name} localizada na cidade de ${company.value?.addresses[0].city} no estado de ${company.value?.addresses[0].state}` +
+        ` iniciou suas atividades em ${company.value?.company_tax_info.data_inicio_atividade}.`;
+
+    company_activities.value = `A empresa tem como atividade principal ${company.value?.primary_activity.description}.`;
+
+    principal_activity_code.value = company.value?.primary_activity.code;
+    principal_activity_description.value = company.value?.primary_activity.description;
+
+    secondary_activities.value = company.value?.secondary_activities;
+
+})
+
+</script>
+
+<style></style>

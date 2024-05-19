@@ -1,0 +1,147 @@
+import axios from "axios";
+
+// create a function to fetch the routes from the API
+const getCNPJs = async () => {
+
+  const itemsPerPage = 100;  // Adjust based on your performance needs
+  let slugs = [];
+  let fetchedAll = false;
+  let start = 0;
+
+  while (!fetchedAll) {
+
+    const url = `${process.env.STRAPI_URL}/api/generate-companies?pagination[start]=${start}&pagination[limit]=${itemsPerPage}&filters[execute]=true`
+
+    try {
+
+      const tmp = await axios.get(url);
+      const res = tmp.data;
+      slugs.push(res.data.map(obj => `/empresas/${obj.attributes.cnpj}`));
+      start += itemsPerPage;
+      if (res.meta.pagination.start > res.meta.pagination.total) {
+        fetchedAll = true;
+      }
+    } catch (error) {
+      console.error('** Error loading CNPJs ** :', error);
+      break;  // Exit the loop in case of an error
+    }
+  }
+
+  return slugs;
+};
+
+// https://nuxt.com/docs/api/configuration/nuxt-config
+export default defineNuxtConfig({
+  // development
+  devtools: { enabled: true },
+  // static site generation
+  ssr: true,
+  experimental: {
+    payloadExtraction: true,
+    renderJsonPayloads: true,
+  },
+  $development: {
+    experimental: {
+      payloadExtraction: false
+    }
+  },
+  $production: {
+    nitro: {
+      static: true
+    }
+  },
+  target: 'static',
+  hooks: {
+    async 'nitro:config'(nitroConfig) {
+      if (nitroConfig.dev) {
+        return;
+      }
+      // fetch the routes from our function above
+      const slugs = await getCNPJs();
+      // add the routes to the nitro config
+      slugs.forEach(e => {
+        nitroConfig.prerender.routes.push(...e);
+      });
+
+    },
+  },
+  // // **************//
+  // **** SEO **** //
+  // **************//  
+  // common meta configuration
+  site: {
+    url: 'https://ccnpj.com',
+    name: 'Consulta CNPJ',
+    description: 'Consulta CNPJ',
+    defaultLocale: 'pt-br',
+    trailingSlash: false,
+  },
+  // robots
+  robots: {
+    blockNonSeoBots: true,
+    enabled: true
+  },
+  // sitemap
+  sitemap: {
+    sitemaps: true,
+    defaultSitemapsChunkSize: 500,
+    cacheMaxAgeSeconds: 3600 //1 hour
+  },
+  // Organization
+  schemaOrg: {
+    identity: {
+      type: 'Organization',
+      name: 'CCNPJ - Consulta CNPJ',
+      url: 'https://ccnpj.com',
+      logo: 'https://ccnpj.com/logo.png'
+    }
+  },
+  // **** PRE-RENDERING ROUTES **** //
+  nitro: {
+    prerender: {
+      crawlLinks: true,
+      failOnError: false,
+      concurrency:1,
+      interval: 100,
+      retry: 3,
+      retryDelay: 1000,
+      routes: ['/quem-somos', '/politica-privacidade', '/termos-condicoes', '/empresas']
+    },
+  },
+  // *****************//
+  // ** COMPILING ** //
+  // *****************//
+  // vite config
+  vite: {
+    define: { 'process.env': {} },
+
+    build: {
+      chunkSizeWarningLimit: 5000,
+    },
+  },
+  modules: ['nuxt-gtag', '@nuxt/ui', '@nuxtjs/seo', '@pinia/nuxt',
+    '@nuxtjs/strapi', 'nuxt-jsonld', '@nuxtjs/google-adsense'],
+
+  strapi: {
+    url: process.env.STRAPI_URL || 'http://127.0.0.1:1337',
+    prefix: '/api',
+    version: 'v4',
+    cookie: {},
+    cookieName: 'strapi_jwt'
+  },
+
+  googleAdsense: {
+    id: 'ca-pub-9343074591635721',
+    test: true
+  },
+
+  //gtag
+  gtag: {
+    id: 'G-0B0GW8XTYL'
+  },
+
+  // @nuxt/ui config
+  colorMode: {
+    preference: 'light'
+  }
+})
