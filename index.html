@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sitemap Index</title>
+</head>
+<body>
+    <h1>Sitemap Index</h1>
+    <div id="sitemap-content"></div>
+    <script>
+        fetch('sitemap_index.xml')
+            .then(response => response.text())
+            .then(data => {
+                const parser = new DOMParser();
+                const xml = parser.parseFromString(data, "application/xml");
+                const sitemaps = xml.querySelectorAll('sitemap');
+                const content = document.getElementById('sitemap-content');
+
+                sitemaps.forEach(sitemap => {
+                    const loc = sitemap.querySelector('loc').textContent;
+                    const lastmod = sitemap.querySelector('lastmod').textContent;
+                    const element = document.createElement('div');
+                    element.innerHTML = `<p><a href="${loc}">${loc}</a> - Last modified: ${lastmod}</p>`;
+                    content.appendChild(element);
+                });
+            })
+            .catch(err => console.error('Error loading the sitemap index:', err));
+    </script>
+</body>
+</html>
